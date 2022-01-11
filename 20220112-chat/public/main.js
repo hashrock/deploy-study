@@ -14,7 +14,6 @@ class Field {
     this.clear();
 
     for (const user in users) {
-      console.log(users)
       if(user == this.id) {
         ctx.fillStyle = "red";
       } else {
@@ -55,6 +54,7 @@ class ChatClient {
           this.status = "CONNECTING";
           break;
         case EventSource.CLOSED:
+          console.log("disconnected");
           this.status = "DISCONNECTED";
           break;
       }
@@ -89,6 +89,12 @@ class ChatClient {
       method: "POST",
       body: JSON.stringify({ user: user, type: "alive", body: "" }),
     });
+
+    Object.keys(users).forEach((id) => {
+      if (users[id].ts < Date.now() - 10 * 1000) {
+        delete users[id];
+      }
+    });    
   }
 }
 
@@ -127,16 +133,7 @@ client.start({
       return;
     }
     // ユーザ追加
-    if (!users[msg.user.id]) {
-      users[msg.user.id] = msg.user;
-    }
-
-    // ユーザ削除
-    Object.keys(users).forEach((id) => {
-      if (users[id].ts < Date.now() - 10 * 1000) {
-        delete users[id];
-      }
-    });
+    users[msg.user.id] = msg.user;
   },
 });
 setInterval(() => {
