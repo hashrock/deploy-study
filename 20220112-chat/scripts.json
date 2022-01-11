@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "start": "deno run -A --unstable --watch main.ts",
+    "deploy": "deployctl deploy --project=hashrock-study-20220112-chat ./main.ts"
+  }
+}

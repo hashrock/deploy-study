@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+  </head>
+  <body>
+    <canvas id="canv"></canvas>
+
+    <script>
+      const canvas = document.getElementById("canv");
+      const ctx = canvas.getContext("2d");
+      let globalMessages = [];
+      const userMessages = {};
+      const users = {};
+      const user = { id: "abc", name: "taro", x: 100, y: 100 };
+
+      async function sendAlive() {
+        await fetch("/api/send", {
+          method: "POST",
+          body: JSON.stringify({ user: user, type: "alive", body: "" }),
+        });
+      }
+
+      let status = "";
+      setInterval(() => {
+        if (status === "CONNECTED") {
+          sendAlive();
+        }
+      }, 2000);
+
+      setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let user in users) {
+          ctx.fillStyle = users[user].color;
+          ctx.fillRect(users[user].x, users[user].y, 10, 10);
+          // draw user name
+          ctx.font = "10px Arial";
+          ctx.fillText(users[user].name, users[user].x, users[user].y - 5);
+        }
+      }, 100);
+
+      const events = new EventSource("/api/listen");
+      events.addEventListener("open", () => (status = "CONNECTED"));
+      events.addEventListener("error", () => {
+        switch (events.readyState) {
+          case EventSource.OPEN:
+            status = "CONNECTED";
+            break;
+          case EventSource.CONNECTING:
+            status = "CONNECTING";
+            break;
+          case EventSource.CLOSED:
+            status = "DISCONNECTED";
+            break;
+        }
+      });
+
+      events.addEventListener("message", (e) => {
+        const msg = JSON.parse(e.data);
+        if (msg.type === "message") {
+          userMessages[msg.user.id] = {
+            id: msg.id,
+            body: msg.body,
+            ts: msg.ts,
+            user: msg.user,
+          };
+          globalMessages.push({
+            id: msg.id,
+            body: msg.body,
+            ts: msg.ts,
+            user: msg.user,
+          });
+          globalMessages = globalMessages.slice(-10);
+
+          globalMessageText.text = globalMessages
+            .map((m) => `${m.user.name}: ${m.body}`)
+            .join("\n");
+        }
+
+        if (msg.type === "alive") {
+          users[msg.user.id] = msg.user;
+
+          Object.keys(users).forEach((id) => {
+            if (users[id].ts < Date.now() - 10 * 1000) {
+              delete users[id];
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
