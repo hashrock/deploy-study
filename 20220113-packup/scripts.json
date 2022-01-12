@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "deno run --allow-net --allow-env --allow-read main.ts",
+    "start": "deno run --allow-net --allow-env --allow-read --watch main.ts",
     "build": "packup build frontend/index.html --static-dir frontend/static"
   }
 }
