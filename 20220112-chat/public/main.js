@@ -5,7 +5,7 @@ class Field {
     this.width = canvas.width;
     this.height = canvas.height;
     this.users = users;
-    this.id = id
+    this.id = id;
   }
   clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -26,7 +26,11 @@ class Field {
       if (userMessages[user]) {
         for (let i = 0; i < userMessages[user].length; i++) {
           ctx.fillStyle = "black";
-          ctx.fillText(userMessages[user][i].body, users[user].x, users[user].y + 15 + (i * 10));
+          ctx.fillText(
+            userMessages[user][i].body,
+            users[user].x,
+            users[user].y + 15 + (i * 10),
+          );
         }
       }
     }
