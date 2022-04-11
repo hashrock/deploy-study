@@ -14,7 +14,7 @@ class Field {
     this.clear();
 
     for (const user in users) {
-      if(user == this.id) {
+      if (user == this.id) {
         ctx.fillStyle = "red";
       } else {
         ctx.fillStyle = "blue";
@@ -22,6 +22,13 @@ class Field {
       ctx.fillRect(users[user].x, users[user].y, 10, 10);
       ctx.font = "10px Arial";
       ctx.fillText(users[user].name, users[user].x, users[user].y - 5);
+
+      if (userMessages[user]) {
+        for (let i = 0; i < userMessages[user].length; i++) {
+          ctx.fillStyle = "black";
+          ctx.fillText(userMessages[user][i].body, users[user].x, users[user].y + 15 + (i * 10));
+        }
+      }
     }
   }
 }
@@ -94,7 +101,7 @@ class ChatClient {
       if (users[id].ts < Date.now() - 10 * 1000) {
         delete users[id];
       }
-    });    
+    });
   }
 }
 
@@ -140,10 +147,10 @@ setInterval(() => {
   field.render();
 }, 100);
 
-const send = document.getElementById("send");
-send.addEventListener("click", (ev) => {
-  const msg = document.getElementById("msg");
+const chat = document.getElementById("chat");
+chat.addEventListener("submit", (ev) => {
   ev.preventDefault();
+  const msg = document.getElementById("msg");
   client.sendMessage(msg.value);
   msg.value = "";
 });
