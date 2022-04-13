@@ -126,9 +126,9 @@ const client = new ChatClient(user.id, users);
 client.start({
   onReceive(msg) {
     // 自IDのメッセージは無視
-    if (msg.user.id === user.id) {
-      return;
-    }
+    // if (msg.user.id === user.id) {
+    //   return;
+    // }
     // ユーザ追加
     if (!users[msg.user.id]) {
       users[msg.user.id] = msg.user;
