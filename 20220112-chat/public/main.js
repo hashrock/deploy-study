@@ -19,17 +19,20 @@ class Field {
       } else {
         ctx.fillStyle = "blue";
       }
+      const fontSize = 14
+
       ctx.fillRect(users[user].x, users[user].y, 10, 10);
-      ctx.font = "10px Arial";
-      ctx.fillText(users[user].name, users[user].x, users[user].y - 5);
+      ctx.font = `${fontSize}px Arial`;
+      ctx.fillText(users[user].name, users[user].x, users[user].y + 25);
 
       if (userMessages[user]) {
+        const messageHeight = userMessages[user].length * fontSize;
         for (let i = 0; i < userMessages[user].length; i++) {
           ctx.fillStyle = "black";
           ctx.fillText(
             userMessages[user][i].body,
             users[user].x,
-            users[user].y + 15 + (i * 10),
+            users[user].y + fontSize + (i * fontSize) - messageHeight - 20,
           );
         }
       }
