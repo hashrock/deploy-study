@@ -117,6 +117,8 @@ const ctx = canvas.getContext("2d");
 let globalMessages = [];
 const userMessages = {};
 const users = {};
+const userDrawPositions = {}
+
 const user = {
   id: Date.now(),
   name: "taro",
@@ -153,6 +155,13 @@ client.start({
 setInterval(() => {
   field.render();
 }, 100);
+
+canvas.addEventListener("pointerdown", (ev)=>{
+  const x = ev.offsetX;
+  const y = ev.offsetY;
+  user.x = x
+  user.y = y
+})
 
 const chat = document.getElementById("chat");
 chat.addEventListener("submit", (ev) => {
